@@ -1,0 +1,93 @@
+library(readxl)
+
+```{r}
+# Read in the data from Excel
+mydata <- read_excel("drink.xlsx")
+```
+
+# Extract the values for Drink1-3
+Drink1 <- mydata$Drink1
+Drink2 <- mydata$Drink2
+Drink3 <- mydata$Drink3
+ 
+num = length(Drink1)
+sprintf("Amount of data is %d",num) ###Simple size
+print("Drink1")
+
+#show Drink1
+Drink1    
+
+#Calculator of MeanData and Standard Diviation
+meanData= mean(Drink1)
+sdData= sd(Drink1)
+sprintf("Mean of Data is %.4f",meanData)
+sprintf("Standard diviaionis %.4f",sdData)
+medianData= median(Drink1)
+sprintf("Median of Data is %.4f",medianData)
+
+#Calculator Normality Distribution
+SE = sdData/sqrt(num)
+sprintf("Standard Error is %f",SE)
+E = qt(0.975, df=num-1)*SE
+E # margin of error
+meanData+ c(-E,E)
+
+#show Histogram of dirnk1
+hist(Drink1, probability=TRUE)
+
+#Normality test by Shapiro-Wilk’s method
+shapiro.test(Drink1)
+
+#Compute Z-value
+mudrink= 2.6 # hypothesized value
+z = (meanData- mudrink) / SE
+z ### Compute Critical value
+alpha = .05
+z.half.alpha= qnorm(1-alpha/2)
+c(-z.half.alpha, z.half.alpha)
+# test statistic
+
+#Compute p-value
+pvalDataDrink= 2 * pnorm(z) # lower tail
+pvalDataDrink # two?tailedp?value
+
+
+print("Drink2")
+#show Drink2
+Drink2
+cor(Drink1,Drink2)
+
+#Linear Simple Regression
+grade.lm = lm(Drink1 ~ Drink2)
+coeffs= coefficients(grade.lm); coeffs
+summary(grade.lm)$r.squared
+summary(grade.lm)
+sprintf("Correlation between groups %f ", cor(Drink1,Drink2))
+sprintf("Simple regression equation is %f", coefficients(grade.lm))
+sprintf("Coefficient of decision is %f",summary
+        (grade.lm)$r.squared)
+        
+#show Histogram of dirnk2
+hist(Drink2, breaks = seq(0.5, 4.5, by = 1), ylim = c(0, 100))
+
+
+meanData3 = mean(Drink3)
+print("Drink3")
+#show Drink3
+Drink3
+muStore= 15.4 # hypothesized value
+s = 2.5 # sample standard deviation   
+t = (meanData3 - muStore) / ( s / sqrt(num))
+t # test statistic
+
+#Compute Critical value
+alpha = .05
+t.half.alpha= qt(1-alpha/2, df=num-1)
+c(-t.half.alpha, t.half.alpha) # critical value
+
+#Compute p-value
+pvalDataStore= 2 * pt(t, df=num-1) # lower tail
+sprintf("Pvalof DataStore is %.4f",pvalDataStore) # two?tailedp?value
+
+#show Histogram of dirnk3
+hist(Drink3, probability=TRUE)
